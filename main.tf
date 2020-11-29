@@ -42,6 +42,7 @@ resource "aws_key_pair" "deployer" {
 }
 resource "aws_launch_configuration" "as_conf" {
   name          = "web_config"
+  #name_prefix   = "mancave-instance"
   image_id      = "ami-04bf6dcdc9ab498ca" 
   instance_type = "t2.micro"
   key_name      = "${aws_key_pair.deployer.key_name}"
@@ -49,16 +50,56 @@ resource "aws_launch_configuration" "as_conf" {
 }
 
 resource "aws_autoscaling_group" "ec2" {
-  name                      = "mancave-test"
-  max_size                  = 1
-  min_size                  = 1
-  desired_capacity          = 1
+  name                      = "mancavetest"
+  max_size                  = 4
+  min_size                  = 2
+  desired_capacity          = 2
   force_delete              = true
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
   availability_zones        = ["us-east-1a", "us-east-1c"]
+  target_group_arns         = ["${aws_lb_target_group.test.arn}"]
   tag {
     key                 = "test"
     value               = "success"
     propagate_at_launch = false
   }
 }
+
+resource "aws_lb" "alb_mancave" {
+  name               = "mancave-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = ["${aws_security_group.allow_ssh.id}"]
+  subnets            = data.aws_subnet_ids.mancave.ids
+  enable_deletion_protection = false
+}
+
+resource "aws_lb_target_group" "test" {
+  name     = "tf-example-lb-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "vpc-30ca1b4d"
+}
+
+
+
+resource "aws_lb_listener" "front_end" {
+  load_balancer_arn = "${aws_lb.alb_mancave.arn}"
+  port              = "80"
+  protocol          = "HTTP"
+ 
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.test.arn}"
+  }
+}
+
+
+
+##################################################################
+# Data sources to get VPC and subnets
+##################################################################
+data "aws_subnet_ids" "mancave" {
+  vpc_id = "vpc-30ca1b4d"
+}
+

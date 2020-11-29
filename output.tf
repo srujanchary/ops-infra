@@ -7,3 +7,11 @@ output "sg" {
 output "lc" {
     value = aws_launch_configuration.as_conf.name
 }
+
+output "alb_arn" {
+    value = aws_lb.alb_mancave.arn
+}
+
+output "target-arn" {
+    value = aws_lb_target_group.test.arn
+}
