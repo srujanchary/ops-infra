@@ -15,3 +15,16 @@ output "alb_arn" {
 output "target-arn" {
     value = aws_lb_target_group.test.arn
 }
+
+output "ami" {
+    value = data.aws_ami.mancave.id
+}
+/*
+output "zone_id" {
+    value = aws_lb.aws_mancave.zone_id
+}
+
+output "dns_name" {
+    value = aws_lb.aws_mancave.dns_name
+}
+*/

@@ -40,10 +40,28 @@ resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKHWuNkpKZ/MEhysjzgGScW8MF2E+gQSLx3huchQOysve6V8c8vGwfoqEVx3Vn25eJUJhFDAyjQ21TvuD4pss9gH8LIot+3G8OtIuAzQOANcmhJZpnfiP8125g5hTmbOt3asNfnM1KkNViuZV2v8lemI/glx29a9d6E2eElhhWij9RCXYHK21wRKgJ2pWxBAx9VSzyqlbkmCWhiAFq9RYyvtOuAWsyXdbQksHyCuWUR9pNkP/1Px2NSYoPdqP3fPoRVQPSRGKNqXnEnjIdOJU1m2nEH3islerEvBF7iMAi68sXk6LMuyo+/EwnZFCgiLjuvk8JgpzvBRdiSB5zRgmx srujan.chary@C-0272"
 }
+
+data "aws_ami" "mancave" {
+  most_recent = true
+  filter {
+    name = "name"
+    values = ["amzn2-ami-hvm*"]
+  }
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["137112412989"]
+}
+
 resource "aws_launch_configuration" "as_conf" {
   name          = "web_config"
   #name_prefix   = "mancave-instance"
-  image_id      = "ami-04bf6dcdc9ab498ca" 
+  image_id      = "${data.aws_ami.mancave.id}" 
   instance_type = "t2.micro"
   key_name      = "${aws_key_pair.deployer.key_name}"
   security_groups = ["${aws_security_group.allow_ssh.id}"]
@@ -94,12 +112,13 @@ resource "aws_lb_listener" "front_end" {
   }
 }
 
-
-
 ##################################################################
 # Data sources to get VPC and subnets
 ##################################################################
 data "aws_subnet_ids" "mancave" {
   vpc_id = "vpc-30ca1b4d"
 }
+
+
+
 
