@@ -59,12 +59,13 @@ data "aws_ami" "mancave" {
 }
 
 resource "aws_launch_configuration" "as_conf" {
-  name          = "web_config"
-  #name_prefix   = "mancave-instance"
-  image_id      = "${data.aws_ami.mancave.id}" 
-  instance_type = "t2.micro"
-  key_name      = "${aws_key_pair.deployer.key_name}"
+  name            = "web_config"
+  #name_prefix    = "mancave-instance"
+  image_id        = "${data.aws_ami.mancave.id}" 
+  instance_type   = "t2.micro"
+  key_name        = "${aws_key_pair.deployer.key_name}"
   security_groups = ["${aws_security_group.allow_ssh.id}"]
+  user_data       = "${file("userdata.sh")}"
 }
 
 resource "aws_autoscaling_group" "ec2" {
@@ -118,7 +119,3 @@ resource "aws_lb_listener" "front_end" {
 data "aws_subnet_ids" "mancave" {
   vpc_id = "vpc-30ca1b4d"
 }
-
-
-
-
