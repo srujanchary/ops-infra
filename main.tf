@@ -119,3 +119,22 @@ resource "aws_lb_listener" "front_end" {
 data "aws_subnet_ids" "mancave" {
   vpc_id = "vpc-30ca1b4d"
 }
+
+##################################################################
+# ROUTE 53
+##################################################################
+resource "aws_route53_zone" "mancave" {
+  name = "mancave.com"
+}
+
+resource "aws_route53_record" "www" {
+  zone_id = "${aws_route53_zone.mancave.zone_id}"
+  name    = "example.com"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.alb_mancave.dns_name}"
+    zone_id                = "${aws_lb.alb_mancave.zone_id}"
+    evaluate_target_health = true
+  }
+}

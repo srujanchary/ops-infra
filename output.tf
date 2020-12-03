@@ -19,12 +19,15 @@ output "target-arn" {
 output "ami" {
     value = data.aws_ami.mancave.id
 }
-/*
+
 output "zone_id" {
-    value = aws_lb.aws_mancave.zone_id
+    value = aws_lb.alb_mancave.zone_id
 }
 
 output "dns_name" {
-    value = aws_lb.aws_mancave.dns_name
+    value = aws_lb.alb_mancave.dns_name
 }
-*/
+
+output "route53_zone_id" {
+    value = aws_route53_zone.mancave.zone_id
+}
