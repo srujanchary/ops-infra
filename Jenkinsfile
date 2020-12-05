@@ -15,7 +15,6 @@ pipeline {
         sh 'echo $SVC_ACCOUNT_KEY | base64 -d > ./creds/serviceaccount.json'
       }
     }
-    stages {
     stage('Terraform Init') {
       steps {
         sh "terraform init"
@@ -31,7 +30,6 @@ pipeline {
         input 'Apply Plan'
         sh "terraform apply"
       }
-    }
-  } 
-
+    } 
+  }
 }
