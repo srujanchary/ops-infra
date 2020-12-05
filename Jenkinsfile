@@ -22,8 +22,8 @@ pipeline {
                     usernamePassword(credentialsId: 'AWSSecretKey',usernameVariable: 'secret_key', passwordVariable: 'secret_key_id')
     ])
   {
-        sh "export TF_VAR_access_key = '${access_key_id}'"
-        sh "export TF_VAR_secret_key = '${seceret_key_id}'"
+        sh "export TF_VAR_access_key='${access_key_id}'"
+        sh "export TF_VAR_secret_key='${seceret_key_id}'"
         sh "terraform init -input=false"
   }
       }
@@ -35,8 +35,8 @@ pipeline {
                     usernamePassword(credentialsId: 'AWSSecretKey',usernameVariable: 'secret_key', passwordVariable: 'secret_key_id')
     ])
   {
-        sh "export TF_VAR_access_key = '${access_key_id}'"
-        sh "export TF_VAR_secret_key = '${seceret_key_id}'"
+        sh "export TF_VAR_access_key='${access_key_id}'"
+        sh "export TF_VAR_secret_key='${seceret_key_id}'"
         sh "terraform plan -out=tfplan -input=false"
   }      
       }
