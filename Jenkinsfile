@@ -22,13 +22,13 @@ pipeline {
     }
     stage('Terraform Plan') {
       steps {
-        sh "terraform plan -out=tfplan"
+        sh "terraform plan -input=false"
       }
     }
     stage('Terraform Apply') {
       steps {
         input 'Apply Plan'
-        sh "terraform apply"
+        sh "terraform apply -input=false"
       }
     } 
   }
