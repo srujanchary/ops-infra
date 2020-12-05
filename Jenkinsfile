@@ -1,31 +1,46 @@
 pipeline {
-  agent any  
-  parameters {
-    password (name: 'AWS_ACCESS_KEY_ID')
-    password (name: 'AWS_SECRET_ACCESS_KEY')
-  }
+
+  agent any
+
   environment {
-    //TF_WORKSPACE = 'dev' //Sets the Terraform Workspace
-    TF_IN_AUTOMATION = 'true'
-    AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
+    SVC_ACCOUNT_KEY = credentials('terraform-auth')
   }
+
   stages {
-    stage('Terraform Init') {
+
+    stage('Checkout') {
       steps {
-        sh "terraform init"
+        checkout scm
+        sh 'mkdir -p creds' 
+        sh 'echo $SVC_ACCOUNT_KEY | base64 -d > ./creds/serviceaccount.json'
       }
     }
-    stage('Terraform Plan') {
+
+    stage('TF Plan') {
       steps {
-        sh "terraform plan -input=false -backend-config=access_key=${params.AWS_ACCESS_KEY_ID} -backend-config=secret_key=${params.AWS_SECRET_ACCESS_KEY}"
+        container('terraform') {
+          sh 'terraform init'
+          sh 'terraform plan -out myplan'
+        }
+      }      
+    }
+
+    stage('Approval') {
+      steps {
+        script {
+          def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+        }
       }
     }
-    stage('Terraform Apply') {
+
+    stage('TF Apply') {
       steps {
-        input 'Apply Plan'
-        sh "terraform plan -input=false -backend-config=access_key=${params.AWS_ACCESS_KEY_ID} -backend-config="secret_key=${params.AWS_SECRET_ACCESS_KEY}""
+        container('terraform') {
+          sh 'terraform apply -input=false myplan'
+        }
       }
     }
-  }
+
+  } 
+
 }
