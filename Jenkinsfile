@@ -18,13 +18,13 @@ pipeline {
     }
     stage('Terraform Plan') {
       steps {
-        sh terraform plan -input=false -backend-config="access_key=${params.AWS_ACCESS_KEY_ID}" -backend-config="secret_key=${params.AWS_SECRET_ACCESS_KEY}"
+        sh "terraform plan -input=false -backend-config="access_key=${params.AWS_ACCESS_KEY_ID}" -backend-config="secret_key=${params.AWS_SECRET_ACCESS_KEY}""
       }
     }
     stage('Terraform Apply') {
       steps {
         input 'Apply Plan'
-        sh terraform plan -input=false -backend-config="access_key=${params.AWS_ACCESS_KEY_ID}" -backend-config="secret_key=${params.AWS_SECRET_ACCESS_KEY}"
+        sh "terraform plan -input=false -backend-config="access_key=${params.AWS_ACCESS_KEY_ID}" -backend-config="secret_key=${params.AWS_SECRET_ACCESS_KEY}""
       }
     }
   }
