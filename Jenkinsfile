@@ -24,6 +24,7 @@ pipeline {
   {
         sh 'export AWS_ACCESS_KEY_ID=$access_key_id'
         sh 'export AWS_SECRET_ACCESS_KEY=$seceret_key_id'
+        sh 'export AWS_DEFAULT_REGION=us-east-2'
         sh "terraform init -input=false"
   }
       }
@@ -37,6 +38,7 @@ pipeline {
   {
         sh 'export AWS_ACCESS_KEY_ID=$access_key_id'
         sh 'export AWS_SECRET_ACCESS_KEY=$seceret_key_id'
+        sh 'export AWS_DEFAULT_REGION=us-east-2'
         sh "terraform plan -out=tfplan -input=false"
   }      
       }
