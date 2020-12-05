@@ -17,7 +17,15 @@ pipeline {
   stages {
     stage('Terraform Init') {
       steps {
+        withCredentials([
+                    usernamePassword(credentialsId: 'AWS_ACCESS_KEY_ID',usernameVariable: 'access_key', passwordVariable: 'access_key_id'),
+                    usernamePassword(credentialsId: 'AWSSecretKey',usernameVariable: 'secret_key', passwordVariable: 'secret_key_id')
+    ])
+  {
+        sh "export TF_VAR_access_key = '${access_key_id}'"
+        sh "export TF_VAR_secret_key = '${seceret_key_id}'"
         sh "terraform init -input=false"
+  }
       }
     }
     stage('Terraform Plan') {
