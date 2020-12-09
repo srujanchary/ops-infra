@@ -87,7 +87,7 @@ bundle exec rake spec || true
           steps {
             script {
           if (params.type == 'destroy') {
-                sh "terraform destroy -input=false"
+                sh "terraform destroy -auto-approve"
           } 
           } 
           }
