@@ -17,36 +17,17 @@ pipeline {
   stages {
     stage('Terraform Init') {
       steps {
-        withCredentials([
-                    usernamePassword(credentialsId: 'AWS_ACCESS_KEY_ID',usernameVariable: 'access_key', passwordVariable: 'access_key_id'),
-                    usernamePassword(credentialsId: 'AWSSecretKey',usernameVariable: 'secret_key', passwordVariable: 'secret_key_id')
-    ])
-  {
-        sh 'export AWS_ACCESS_KEY_ID=$access_key_id'
-        sh 'export AWS_SECRET_ACCESS_KEY=$seceret_key_id'
-        sh 'export AWS_DEFAULT_REGION=us-east-1'
-        sh "terraform init -input=false"
-  }
+        sh "terraform init"
       }
     }
     stage('Terraform Plan') {
       steps {
-        withCredentials([
-                    usernamePassword(credentialsId: 'AWS_ACCESS_KEY_ID',usernameVariable: 'access_key', passwordVariable: 'access_key_id'),
-                    usernamePassword(credentialsId: 'AWSSecretKey',usernameVariable: 'secret_key', passwordVariable: 'secret_key_id')
-    ])
-  {
-        sh 'export AWS_ACCESS_KEY_ID=$access_key_id'
-        sh 'export AWS_SECRET_ACCESS_KEY=$seceret_key_id'
-        sh 'export AWS_DEFAULT_REGION=us-east-1'
-        sh "terraform plan -out=tfplan -input=false"
-  }      
+        sh "terraform plan"
       }
     }
     stage('Terraform Apply') {
       steps {
-        input 'Apply Plan'
-        sh "terraform apply -input=false tfplan"
+        sh "terraform apply"
       }
     }
     stage('AWSpec Tests') {
