@@ -22,12 +22,12 @@ pipeline {
     }
     stage('Terraform Plan') {
       steps {
-        sh "terraform plan"
+        sh "terraform plan -out=tfplan -input=false"
       }
     }
     stage('Terraform Apply') {
       steps {
-        sh "terraform apply"
+        sh "terraform apply -input=false tfplan"
       }
     }
     stage('AWSpec Tests') {
