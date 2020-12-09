@@ -75,14 +75,18 @@ bundle exec rake spec || true
         }
 
         stage('Apply') {
+          steps {
           if (params.type == 'apply') {
                 sh "terraform apply -input=false tfplan"
+          }
           }  
         }
         stage('Destroy') {
+          steps {
           if (params.type == 'destroy') {
                 sh "terraform destroy -input=false tfplan"
-          }  
+          } 
+          } 
         }
     }
 
