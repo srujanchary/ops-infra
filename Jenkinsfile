@@ -96,4 +96,4 @@ bundle exec rake spec || true
         }
     }
 }
-}
+
